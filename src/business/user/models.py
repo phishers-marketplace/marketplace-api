@@ -12,7 +12,6 @@ class User(Document):
     name: str
     email: EmailStr
     password_hash: str
-    photo_url: str | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     class Settings:

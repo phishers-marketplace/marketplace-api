@@ -2,10 +2,8 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
-from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
-from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from business.user import router as user_router
 from core.config import CONFIG

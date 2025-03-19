@@ -1,12 +1,11 @@
-from datetime import UTC, datetime, timedelta
+from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import APIRouter, HTTPException, status
 
 from core.config import CONFIG
 
 from .models import User
-from .schemas import Token, UserCreate, UserSchema
+from .schemas import Token, UserCreate, UserLogin, UserSchema
 from .service import CurrentUser, authenticate_user, create_access_token, get_password_hash
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -19,7 +18,7 @@ async def get_me(current_user: CurrentUser):
 
 
 @router.post("/register", response_model=UserSchema, status_code=status.HTTP_201_CREATED)
-async def register_user(user_data: UserCreate):
+async def register_user(user_data: UserCreate) -> UserSchema:
     """Register a new user with email and password."""
     # Check if user with this email already exists
     existing_user = await User.find_one(User.email == user_data.email.lower())
@@ -32,16 +31,15 @@ async def register_user(user_data: UserCreate):
         name=user_data.name,
         email=user_data.email.lower(),
         password_hash=password_hash,
-        photo_url=user_data.photo_url,
     )
     await new_user.insert()
     return new_user
 
 
 @router.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(form_data: UserLogin) -> Token:
     """OAuth2 compatible token login, get an access token for future requests."""
-    user = await authenticate_user(form_data.username, form_data.password)
+    user = await authenticate_user(form_data.email, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

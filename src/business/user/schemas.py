@@ -7,14 +7,15 @@ from pydantic import BaseModel, EmailStr
 class UserBase(BaseModel):
     name: str
     email: EmailStr
-    photo_url: str | None = None
 
 
-class UserCreate(BaseModel):
-    name: str
+class UserCreate(UserBase):
+    password: str
+
+
+class UserLogin(BaseModel):
     email: EmailStr
     password: str
-    photo_url: str | None = None
 
 
 class UserSchema(UserBase):
