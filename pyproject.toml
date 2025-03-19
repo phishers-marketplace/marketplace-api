@@ -1,0 +1,43 @@
+[project]
+name = "marketplace-api"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Mehul Arora",email = "mehul21066@iiitd.ac.in"}
+]
+readme = "README.md"
+requires-python = ">=3.11,<4.0"
+dependencies = [
+    "fastapi (>=0.115.8,<0.116.0)",
+    "uvicorn (>=0.34.0,<0.35.0)",
+    "pydantic-settings (>=2.8.0,<3.0.0)",
+    "motor[srv] (>=3.7.0,<4.0.0)",
+    "beanie (>=1.29.0,<2.0.0)",
+    "pydantic[email] (>=2.10.6,<3.0.0)",
+    "orjson (>=3.10.15,<4.0.0)",
+    "python-multipart (>=0.0.20,<0.0.21)",
+    "passlib (>=1.7.4,<2.0.0)",
+    "bcrypt (>=4.3.0,<5.0.0)",
+]
+
+[tool.poetry]
+package-mode = false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.1.0"
+isort = "^5.13.2"
+black = "^24.10.0"
+
+[tool.poetry.requires-plugins]
+poetry-plugin-export = "^1.9.0"
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+line_length = 120

@@ -1,0 +1,21 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 25.1.0
+    hooks:
+      - id: black
+        language_version: python3
+        files: '.*\.py'
+  - repo: https://github.com/PyCQA/isort
+    rev: 6.0.1
+    hooks:
+      - id: isort
+        language_version: python3
+        files: '.*\.py'
+  - repo: local
+    hooks:
+      - id: requirements.txt
+        name: Poetry export requirements.txt
+        language: system
+        files: "poetry.lock"
+        pass_filenames: false
+        entry: poetry export -f requirements.txt --output requirements.txt --without-hashes
