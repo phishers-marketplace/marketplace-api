@@ -42,7 +42,7 @@ marketplace-api/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-organization/marketplace-api.git
+   git clone https://github.com/phishers-marketplace/marketplace-api.git
    cd marketplace-api
    ```
 
@@ -78,6 +78,64 @@ marketplace-api/
 2. The API will be available at: `http://localhost:9000`
 
 3. Access the API documentation at: `http://localhost:9000/docs`
+
+## Docker Deployment
+
+### Prerequisites
+
+- Docker and Docker Compose installed on your system
+- Git for cloning the repository
+
+### Deploying with Docker Compose
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/phishers-marketplace/marketplace-api.git
+   cd marketplace-api
+   ```
+
+2. Create a `.env` file in the root directory (Look at the `.env.sample` file for an example)
+
+3. Build and start the containers:
+   ```bash
+   docker-compose up -d
+   ```
+
+4. The API will be available at: `http://localhost:9000`
+
+5. Access the API documentation at: `http://localhost:9000/docs`
+
+### Viewing Logs
+
+To see the logs from the running containers:
+```bash
+docker-compose logs -f
+```
+
+To see logs for a specific service:
+```bash
+docker-compose logs -f api
+```
+
+### Stopping the Services
+
+To stop the running containers:
+```bash
+docker-compose down
+```
+
+To stop the containers and remove the volumes (will delete all data):
+```bash
+docker-compose down -v
+```
+
+### Rebuilding the API
+
+If you make changes to the code and need to rebuild the API:
+```bash
+docker-compose build api
+docker-compose up -d
+```
 
 ## Development
 
@@ -200,7 +258,3 @@ Once the server is running, you can access the auto-generated API documentation:
 
 - Swagger UI: `http://localhost:9000/docs`
 - ReDoc: `http://localhost:9000/redoc`
-
-## License
-
-See the [LICENSE](LICENSE) file for details.
