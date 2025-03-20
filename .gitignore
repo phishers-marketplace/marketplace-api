@@ -25,6 +25,7 @@ dist/
 
 # macOS Finder files
 .DS_Store
+Thumbs.db
 
 # Diagrams
 diagrams/

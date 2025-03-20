@@ -135,4 +135,4 @@ async def get_admin_user(current_user: User = Depends(get_current_user)) -> User
 
 # Create CurrentUser dependency for routes
 CurrentUser = Annotated[User, Depends(get_current_user)]
-AdminUser = Annotated[User, Depends(get_admin_user)]
+AdminUser = Annotated[CurrentUser, Depends(get_admin_user)]
