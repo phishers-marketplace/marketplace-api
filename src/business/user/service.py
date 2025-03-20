@@ -111,8 +111,28 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
         logger.warning(f"User from token not found: {token_data.email}")
         raise credentials_exception
 
+    if user.is_suspended:
+        suspension_message = (
+            f"Account suspended. Reason: {user.suspension_reason}" if user.suspension_reason else "Account suspended."
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=suspension_message,
+        )
+
     return user
+
+
+async def get_admin_user(current_user: User = Depends(get_current_user)) -> User:
+    """Check if the current user has admin privileges."""
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions. Admin access required.",
+        )
+    return current_user
 
 
 # Create CurrentUser dependency for routes
 CurrentUser = Annotated[User, Depends(get_current_user)]
+AdminUser = Annotated[User, Depends(get_admin_user)]

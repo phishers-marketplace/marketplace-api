@@ -137,6 +137,16 @@ docker-compose build api
 docker-compose up -d
 ```
 
+### Creating an Admin User
+
+To create an initial admin user, run the following command:
+
+```bash
+python -m src.scripts.create_admin admin@example.com SecurePassword "Admin User"
+```
+
+This will create a new admin user with the provided email, password, and name. If a user with the given email already exists, the script will upgrade their account to have admin privileges.
+
 ## Development
 
 ### Adding New Endpoints
