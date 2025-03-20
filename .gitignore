@@ -25,3 +25,6 @@ dist/
 
 # macOS Finder files
 .DS_Store
+
+# Diagrams
+diagrams/
