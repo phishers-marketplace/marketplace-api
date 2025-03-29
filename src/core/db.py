@@ -7,10 +7,10 @@ from business.friends.models import Friendship
 from business.groups.models import Group, GroupMembership
 from business.marketplace.items.models import Item
 from business.marketplace.transactions.models import Transaction
-from business.user import User
+from business.user.models import User, Message
 from core.config import CONFIG
 
-TIMEOUT = 180000
+TIMEOUT = 1800
 
 
 def get_mongodb_url() -> str:
@@ -39,5 +39,6 @@ async def init_db():
             GroupMembership,
             Item,
             Transaction,
+            Message,
         ],
     )

@@ -55,3 +55,22 @@ class UserListResponse(BaseModel):
     total: int
     page: int
     limit: int
+    
+class UserContactsListResponse(BaseModel):
+    contacts: List[UserSchema]
+    total: int
+    limit: int
+
+class MessageCreate(BaseModel):
+    receiver_id: str
+    message: str
+
+class MessageResponse(BaseModel):
+    id: str
+    sender_id: str
+    receiver_id: str
+    message: str
+    timestamp: datetime
+    
+class ListMessageResponse(BaseModel):
+    messages: List[MessageResponse]

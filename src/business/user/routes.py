@@ -1,17 +1,17 @@
 from datetime import timedelta
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 
 from core.config import CONFIG
 
-from .models import User
-from .schemas import Token, UserCreate, UserListResponse, UserLogin, UserSchema, UserSuspend, UserUpdateAdmin
+from .models import User, Message
+from .schemas import Token, UserCreate, UserListResponse, UserLogin, UserSchema, UserSuspend, UserUpdateAdmin, UserContactsListResponse, MessageCreate, MessageResponse, ListMessageResponse
 from .service import AdminUser, CurrentUser, authenticate_user, create_access_token, get_password_hash
 
 router = APIRouter(prefix="/user", tags=["user"])
 
 DEFAULT_PAGE_SIZE = 10
-
 
 @router.get("/me", response_model=UserSchema)
 async def get_me(current_user: CurrentUser):
@@ -67,6 +67,8 @@ async def list_users(
     show_suspended: bool = Query(False, description="Show suspended users only"),
 ):
     """List all users (admin only)."""
+    print('here2')
+    print(admin_user.id)
     skip = (page - 1) * limit
 
     # Build the query
@@ -186,3 +188,65 @@ async def delete_user(
 
     await user.delete()
     return None
+
+
+
+@router.get("/chat", response_model=UserContactsListResponse)
+async def get_contacts(current_user: CurrentUser):
+    # """Get all the users with which a user has done chatting"""
+    
+        user_id = current_user.id
+        
+        # Distinct users the given user has sent messages to
+        sent_to = await Message.distinct("receiver_id", {"sender_id": user_id})
+        received_from = await Message.distinct("sender_id", {"receiver_id": user_id})
+       
+        # Combine and remove duplicates
+        contacts = list(set(sent_to + received_from))
+        
+        # find all users with user id give in the list 
+        users=[]
+        for contact in contacts:
+            user = await User.find_one(User.id == contact)
+            users.append(user)
+        return UserContactsListResponse(contacts=users, total=len(users), limit=len(users))
+    
+@router.post("/chat/send", response_model=MessageResponse)
+async def send_message(user: CurrentUser,data: MessageCreate):
+    """Send a message to another user."""
+  
+    new_message = Message(
+        sender_id=user.id,  # Get sender ID from authentication
+        receiver_id=data.receiver_id,
+        content=data.message,
+        created_at=datetime.now(),
+    )
+
+    await new_message.save()  # Save to MongoDB
+    return MessageResponse(
+        id=new_message.id,
+        sender_id=new_message.sender_id,
+        receiver_id=new_message.receiver_id,
+        message=new_message.content,
+        timestamp=new_message.created_at,
+    )
+        
+        
+@router.get("/chat/{receiver_id}", response_model=ListMessageResponse)
+async def get_all_messages(user:CurrentUser,receiver_id: str):
+    """Fetch chat history between two users."""
+   
+    messages = await Message.find(
+        {
+            "$or": [
+                {"sender_id": user.id, "receiver_id": receiver_id},
+                {"sender_id": receiver_id, "receiver_id": user.id},
+            ]
+        }
+    ).sort("timestamp").to_list()
+
+    if not messages:
+        raise HTTPException(status_code=404, detail="No messages found")
+
+    message_responses = [MessageResponse(id=msg.id,sender_id=msg.sender_id,receiver_id=msg.receiver_id,message=msg.content,timestamp=msg.created_at) for msg in messages]
+    return ListMessageResponse(messages=message_responses)

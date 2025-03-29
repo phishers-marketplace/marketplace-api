@@ -36,6 +36,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
+    print('heree')
     return {"message": "Welcome to the Phishers Marketplace!"}
 
 
