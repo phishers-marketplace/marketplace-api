@@ -15,9 +15,6 @@ db = db.getSiblingDB(process.env.MONGO_INITDB_DATABASE);
 
 // Create the application database and collections
 db.createCollection('users');
-
-// Add any other collections your application needs
-// db.createCollection('products');
-// db.createCollection('orders');
+db.createCollection('messages');
 
 print('MongoDB initialization completed successfully'); 
