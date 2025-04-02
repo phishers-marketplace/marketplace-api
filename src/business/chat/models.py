@@ -1,6 +1,5 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from uuid import uuid4
-from zoneinfo import UTC
 
 from beanie import Document
 from pydantic import Field
