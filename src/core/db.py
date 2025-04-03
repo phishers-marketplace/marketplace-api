@@ -3,11 +3,12 @@ import urllib.parse
 import motor.motor_asyncio
 from beanie import init_beanie
 
+from business.chat import Message
 from business.friends.models import Friendship
 from business.groups.models import Group, GroupMembership
 from business.marketplace.items.models import Item
 from business.marketplace.transactions.models import Transaction
-from business.user.models import User, Message, GroupMessage
+from business.user import User
 from core.config import CONFIG
 
 TIMEOUT = 1800
@@ -37,7 +38,6 @@ async def init_db():
             Friendship,
             Group,
             GroupMembership,
-            GroupMessage,
             Item,
             Transaction,
             Message,

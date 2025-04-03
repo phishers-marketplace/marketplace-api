@@ -11,10 +11,6 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
-    public_key: str
-    encrypted_private_key: str
-    salt: str
-    iv: str
 
 
 class UserLogin(BaseModel):
@@ -28,10 +24,6 @@ class UserSchema(UserBase):
     is_suspended: bool = False
     suspension_reason: Optional[str] = None
     created_at: datetime | None = None
-    public_key: str  
-    encrypted_private_key: str  
-    salt: str
-    iv:str
 
     model_config = {"from_attributes": True}
 
@@ -63,25 +55,3 @@ class UserListResponse(BaseModel):
     total: int
     page: int
     limit: int
-    
-class UserContactsListResponse(BaseModel):
-    contacts: List[UserSchema]
-    total: int
-    limit: int
-    
-
-class MessageCreate(BaseModel):
-    receiver_id: str
-    message_sender_encrypted: str
-    message_receiver_encrypted: str
-
-class MessageResponse(BaseModel):
-    id: str
-    sender_id: str
-    receiver_id: str
-    message_sender_encrypted: str
-    message_receiver_encrypted: str
-    timestamp: datetime
-    
-class ListMessageResponse(BaseModel):
-    messages: List[MessageResponse]

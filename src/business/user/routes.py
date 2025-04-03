@@ -1,20 +1,17 @@
 from datetime import timedelta
-from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 
 from core.config import CONFIG
 
-from business.groups.models import GroupMembership, Group
-from business.friends.models import Friendship
-from business.groups.schemas import GroupsListResponse, GroupSchema
-from .models import User, Message
-from .schemas import Token, UserCreate, UserListResponse, UserLogin, UserSchema, UserSuspend, UserUpdateAdmin, UserContactsListResponse, MessageCreate, MessageResponse, ListMessageResponse
-from .service import AdminUser, CurrentUser, authenticate_user, create_access_token, get_password_hash, generate_rsa_keys, encrypt_private_key, decrypt_private_key
-from cryptography.hazmat.primitives import serialization
+from .models import User
+from .schemas import Token, UserCreate, UserListResponse, UserLogin, UserSchema, UserSuspend, UserUpdateAdmin
+from .service import AdminUser, CurrentUser, authenticate_user, create_access_token, get_password_hash
 
 router = APIRouter(prefix="/user", tags=["user"])
+
 DEFAULT_PAGE_SIZE = 10
+
 
 @router.get("/me", response_model=UserSchema)
 async def get_me(current_user: CurrentUser):
@@ -25,8 +22,6 @@ async def get_me(current_user: CurrentUser):
 @router.post("/register", response_model=UserSchema, status_code=status.HTTP_201_CREATED)
 async def register_user(user_data: UserCreate) -> UserSchema:
     """Register a new user with email and password."""
-    global password
-    password='reg'
     # Check if user with this email already exists
     existing_user = await User.find_one(User.email == user_data.email.lower())
     if existing_user:
@@ -34,18 +29,11 @@ async def register_user(user_data: UserCreate) -> UserSchema:
 
     # Create new user with hashed password
     password_hash = get_password_hash(user_data.password)
-   
     new_user = User(
         name=user_data.name,
         email=user_data.email.lower(),
         password_hash=password_hash,
-        public_key=user_data.public_key, 
-        encrypted_private_key=user_data.encrypted_private_key,
-        salt=user_data.salt,
-        iv=user_data.iv,
     )
-    print(new_user)
-    
     await new_user.insert()
     return new_user
 
@@ -79,7 +67,7 @@ async def list_users(
     show_suspended: bool = Query(False, description="Show suspended users only"),
 ):
     """List all users (admin only)."""
-    print('here2')
+    print("here2")
     print(admin_user.id)
     skip = (page - 1) * limit
 
@@ -200,88 +188,3 @@ async def delete_user(
 
     await user.delete()
     return None
-
-
-
-@router.get("/chat", response_model=UserContactsListResponse)
-async def get_contacts(current_user: CurrentUser):
-    # """Get all the users with which a user has done chatting"""
-        user_id = current_user.id
-        
-        # Find all friendships of the user. He can message them 
-        friends = await Friendship.find(
-        {
-            "$or": [
-                {"requester_id": user_id},
-                {"recipient_id": user_id}
-            ]
-        }
-        ).to_list()
-
-        # Extract the friend IDs (exclude user's own ID)
-        friend_ids = [
-            friend.requester_id if friend.requester_id != user_id else friend.recipient_id
-            for friend in friends
-        ]
-
-        # Find all users with the given friend IDs
-        users=[]
-        for friend_id in friend_ids:
-            user = await User.find_one(User.id == friend_id)
-            users.append(user)
-        # print(users)
-        return UserContactsListResponse(contacts=users, total=len(users), limit=len(users))
-        
-    
-@router.get("/groups", response_model=GroupsListResponse)
-async def get_groups(current_user: CurrentUser):
-     # get all group_id objects where the user is a member
-        groups = await GroupMembership.distinct("user_id", {"user_id": current_user.id})
-        print('groups:',groups)
-        groups_list=[]
-        
-        #find all group objects where user is a member
-        for group in groups: 
-            groups_list.append(Group.find_one(Group.id == group.id))
-        return GroupsListResponse(groups_list=groups_list)
-    
-
-@router.post("/chat/send", response_model=MessageResponse)
-async def send_message(user: CurrentUser,data: MessageCreate):
-    """Send a message to another user."""
-  
-    new_message = Message(
-        sender_id=user.id,  # Get sender ID from authentication
-        receiver_id=data.receiver_id,
-        message_sender_encrypted=data.message_sender_encrypted,   
-        message_receiver_encrypted=data.message_receiver_encrypted,
-        created_at=datetime.now(),
-    )
-
-    await new_message.save()  # Save to MongoDB
-    return MessageResponse(
-        id=new_message.id,
-        sender_id=new_message.sender_id,
-        receiver_id=new_message.receiver_id,
-        message_sender_encrypted=data.message_sender_encrypted,   
-        message_receiver_encrypted=data.message_receiver_encrypted,
-        timestamp=new_message.created_at,
-    )
-        
-        
-@router.get("/chat/{receiver_id}", response_model=ListMessageResponse)
-async def get_all_messages(user:CurrentUser,receiver_id: str):
-    """Fetch chat history between two users."""
-   
-    messages = await Message.find(
-        {
-            "$or": [
-                {"sender_id": user.id, "receiver_id": receiver_id},
-                {"sender_id": receiver_id, "receiver_id": user.id},
-            ]
-        }
-    ).sort("timestamp").to_list()
-
-   
-    message_responses = [MessageResponse(id=msg.id,sender_id=msg.sender_id,receiver_id=msg.receiver_id,message_sender_encrypted=msg.message_sender_encrypted,message_receiver_encrypted=msg.message_receiver_encrypted,timestamp=msg.created_at) for msg in messages]
-    return ListMessageResponse(messages=message_responses)
