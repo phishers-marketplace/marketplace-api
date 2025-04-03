@@ -58,7 +58,7 @@ marketplace-api/
 
 4. Install dependencies using Poetry:
    ```bash
-   poetry install --with dev
+   poetry install --with-dev
    ```
 
 5. Set up pre-commit hooks:
