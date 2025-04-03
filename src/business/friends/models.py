@@ -23,7 +23,7 @@ class Friendship(Document):
     recipient_id: str  # User who received the request
     status: FriendshipStatus = FriendshipStatus.PENDING
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    # updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     class Settings:
         name = "friendships"

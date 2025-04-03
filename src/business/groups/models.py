@@ -21,9 +21,9 @@ class Group(Document):
     name: str
     description: str = ""
     created_by: str  # User ID of the creator
-    # is_public: bool = True
+    is_public: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    # updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     class Settings:
         name = "groups"
@@ -60,4 +60,3 @@ class GroupMembership(Document):
     def __repr__(self) -> str:
         """String representation of the GroupMembership object."""
         return f"GroupMembership(id={self.id}, group_id={self.group_id}, user_id={self.user_id}, role={self.role})"
-
