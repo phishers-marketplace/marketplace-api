@@ -11,6 +11,10 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    public_key: str
+    encrypted_private_key: str
+    salt: str
+    iv: str
 
 
 class UserLogin(BaseModel):
@@ -24,6 +28,10 @@ class UserSchema(UserBase):
     is_suspended: bool = False
     suspension_reason: Optional[str] = None
     created_at: datetime | None = None
+    public_key: str
+    encrypted_private_key: str
+    salt: str
+    iv: str
 
     model_config = {"from_attributes": True}
 

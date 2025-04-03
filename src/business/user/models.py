@@ -16,6 +16,10 @@ class User(Document):
     is_suspended: bool = False
     suspension_reason: str | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    public_key: str  # RSA public key (PEM format)
+    encrypted_private_key: str  # AES-encrypted private key
+    salt: str  # Salt for AES key derivation
+    iv: str
 
     class Settings:
         name = "users"

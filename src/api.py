@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
 
 from business.chat import router as chat_router
+from business.groups import router as groups_router
 from business.user import router as user_router
 from core.config import CONFIG
 from core.db import init_db
@@ -23,6 +24,7 @@ app = FastAPI(
 
 app.include_router(user_router)
 app.include_router(chat_router)
+app.include_router(groups_router)
 
 origins = ["http://localhost", "http://localhost:3000", "http://localhost:9000"]
 

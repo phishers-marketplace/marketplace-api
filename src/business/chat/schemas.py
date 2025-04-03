@@ -8,7 +8,8 @@ class MessageCreate(BaseModel):
     """Schema for creating a new message"""
 
     receiver_id: str
-    message: str
+    message_sender_encrypted: str
+    message_receiver_encrypted: str
 
 
 class MessageResponse(BaseModel):
@@ -17,7 +18,8 @@ class MessageResponse(BaseModel):
     id: str
     sender_id: str
     receiver_id: str
-    message: str
+    message_sender_encrypted: str
+    message_receiver_encrypted: str
     timestamp: datetime
 
 
@@ -33,9 +35,12 @@ class UserContact(BaseModel):
     id: str
     name: str
     email: EmailStr
+    public_key: str
 
 
 class UserContactsListResponse(BaseModel):
     """Schema for list of user contacts response"""
 
     contacts: List[UserContact]
+    total: int
+    limit: int
