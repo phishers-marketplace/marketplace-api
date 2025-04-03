@@ -1,4 +1,4 @@
-from .models import Message
+from .models import GroupMessage, Message
 from .routes import router
 
-__all__ = ["Message", "router"]
+__all__ = ["Message", "GroupMessage", "router"]

@@ -33,6 +33,10 @@ async def register_user(user_data: UserCreate) -> UserSchema:
         name=user_data.name,
         email=user_data.email.lower(),
         password_hash=password_hash,
+        public_key=user_data.public_key,
+        encrypted_private_key=user_data.encrypted_private_key,
+        salt=user_data.salt,
+        iv=user_data.iv,
     )
     await new_user.insert()
     return new_user

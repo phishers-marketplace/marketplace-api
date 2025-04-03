@@ -3,7 +3,7 @@ import urllib.parse
 import motor.motor_asyncio
 from beanie import init_beanie
 
-from business.chat import Message
+from business.chat import GroupMessage, Message
 from business.friends.models import Friendship
 from business.groups.models import Group, GroupMembership
 from business.marketplace.items.models import Item
@@ -33,13 +33,5 @@ async def init_db():
     # Initialize Beanie with all document models
     await init_beanie(
         database=db,
-        document_models=[
-            User,
-            Friendship,
-            Group,
-            GroupMembership,
-            Item,
-            Transaction,
-            Message,
-        ],
+        document_models=[User, Friendship, Group, GroupMembership, Item, Transaction, Message, GroupMessage],
     )
