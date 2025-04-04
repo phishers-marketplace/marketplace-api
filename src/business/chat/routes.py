@@ -71,6 +71,7 @@ async def get_all_messages(user: CurrentUser, receiver_id: str):
         .sort("timestamp")
         .to_list()
     )
+    print(messages)
 
     message_responses = [
         MessageResponse(
