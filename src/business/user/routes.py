@@ -71,8 +71,7 @@ async def list_users(
     show_suspended: bool = Query(False, description="Show suspended users only"),
 ):
     """List all users (admin only)."""
-    print("here2")
-    print(admin_user.id)
+
     skip = (page - 1) * limit
 
     # Build the query

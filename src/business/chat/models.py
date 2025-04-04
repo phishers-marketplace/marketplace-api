@@ -29,20 +29,6 @@ class Message(Document):
         """String representation of the Message object."""
         return f"Message(id={self.id}, sender_id={self.sender_id}, receiver_id={self.receiver_id}, message_sender_encrypted={self.message_sender_encrypted}, message_receiver_encrypted={self.message_receiver_encrypted})"
 
-
-class ChatKey(Document):
-    user_ids: List[str]  # Two users participating in the chat
-    encrypted_aes_key_1: bytes  # AES key encrypted with User 1's public key
-    encrypted_aes_key_2: bytes  # AES key encrypted with User 2's public key
-
-    class Settings:
-        name = "chat_keys"
-
-    def __repr__(self) -> str:
-        """String representation of the ChatKey object."""
-        return f"ChatKey(user_ids={self.user_ids})"
-
-
 class GroupMessage(Document):
     id: str = Field(default_factory=lambda: uuid4().hex)  # Unique identifier for the group message
     group_id: str  # Identifier for the group chat
